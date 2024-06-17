@@ -1,0 +1,118 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build bubwarp",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${workspaceFolder}/src/bubwarp.cpp",
+        "-o",
+        "${workspaceFolder}/bin/x64/bubwarpApp",
+        "-I${workspaceFolder}/include",
+        "-L${workspaceFolder}/lib",
+        "-ltobii_gameintegration_x64",
+        "-lstdc++",
+        "-lgdi32",
+        "-lgdiplus",
+        "-mconsole"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiler task for bubwarp.cpp"
+    },
+    {
+      "label": "build gaze chacker",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${workspaceFolder}/src/gazeChecker.cpp",
+        "-o",
+        "${workspaceFolder}/bin/x64/gazeCheckerApp",
+        "-I${workspaceFolder}/include",
+        "-L${workspaceFolder}/lib",
+        "-ltobii_gameintegration_x64",
+        "-lstdc++",
+        "-mconsole"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiler task for gazeChecker.cpp"
+    },
+    {
+      "label": "build warp",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${workspaceFolder}/src/warp.cpp",
+        "-o",
+        "${workspaceFolder}/bin/x64/warpApp",
+        "-I${workspaceFolder}/include",
+        "-L${workspaceFolder}/lib",
+        "-ltobii_gameintegration_x64",
+        "-lstdc++",
+        "-mconsole"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiler task for warp.cpp"
+    },
+    {
+      "label": "build sample.cpp",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${workspaceFolder}/src/sample.cpp",
+        "-o",
+        "${workspaceFolder}/bin/x64/sampleApp",
+        "-I${workspaceFolder}/include",
+        "-L${workspaceFolder}/lib",
+        "-ltobii_gameintegration_x64",
+        "-lstdc++",
+        "-mconsole" // ここに -mconsole オプションを追加
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiler task for sample.cpp"
+    },
+    {
+      "label": "build my project",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-g",
+        "${workspaceFolder}/src/main.cpp",
+        "-o",
+        "${workspaceFolder}/bin/myApp",
+        "-I",
+        "${workspaceFolder}/include",
+        "-L",
+        "${workspaceFolder}/lib",
+        "-ltobii_gameintegration_x64",
+        "-lstdc++"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compiler task"
+    }
+  ]
+}
