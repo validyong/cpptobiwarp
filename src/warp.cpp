@@ -7,7 +7,10 @@ using namespace TobiiGameIntegration;
 
 void GazeSample()
 {
-    ITobiiGameIntegrationApi *api = GetApi("Gaze Sample");
+    // ITobiiGameIntegrationApi *api = GetApi("Gaze Sample");
+    // IStreamsProvider *streamsProvider = api->GetStreamsProvider();
+    std::unique_ptr<ITobiiGameIntegrationApi, void (*)(ITobiiGameIntegrationApi *)> api(GetApi("Gaze Sample"), [](ITobiiGameIntegrationApi *p)
+                                                                                        { p->Shutdown(); });
     IStreamsProvider *streamsProvider = api->GetStreamsProvider();
 
     // Get the resolution and offset of the main monitor
@@ -33,7 +36,17 @@ void GazeSample()
         GazePoint gazePoint;
         if (streamsProvider->GetLatestGazePoint(gazePoint))
         {
-            if (GetAsyncKeyState(VK_XBUTTON2) & 0x8000) // スペースキーが押されたら
+
+            // check your button
+            // for (int vkCode = 0x01; vkCode <= 0xFF; ++vkCode)
+            // {
+            //     if (GetAsyncKeyState(vkCode) & 0x8000)
+            //     {
+            //         std::cout << "Button pressed: VK_CODE = " << std::hex << vkCode << std::endl;
+            //     }
+            // }
+
+            if (GetAsyncKeyState(0x24) & 0x8000)
             {
                 // std::cout << "Gaze point: [" << gazePoint.X << ", " << gazePoint.Y << "]" << std::endl;
                 // Converts line-of-sight coordinates to pixel coordinates
@@ -54,7 +67,7 @@ void GazeSample()
         Sleep(1000 / 144);
     }
 
-    api->Shutdown();
+    // api->Shutdown();
 }
 
 int main()
