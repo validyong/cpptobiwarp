@@ -2,13 +2,12 @@
 #include <iostream>
 #include "windows.h"
 #include <thread>
+#include <memory>
 
 using namespace TobiiGameIntegration;
 
 void GazeSample()
 {
-    // ITobiiGameIntegrationApi *api = GetApi("Gaze Sample");
-    // IStreamsProvider *streamsProvider = api->GetStreamsProvider();
     std::unique_ptr<ITobiiGameIntegrationApi, void (*)(ITobiiGameIntegrationApi *)> api(GetApi("Gaze Sample"), [](ITobiiGameIntegrationApi *p)
                                                                                         { p->Shutdown(); });
     IStreamsProvider *streamsProvider = api->GetStreamsProvider();
@@ -29,6 +28,8 @@ void GazeSample()
     // Set the tracking range to the resolution of the main monitor
     api->GetTrackerController()->TrackRectangle({0, 0, screenWidth, screenHeight});
 
+    POINT lastCursorPos = {0, 0};
+
     while (true)
     {
         api->Update();
@@ -36,38 +37,36 @@ void GazeSample()
         GazePoint gazePoint;
         if (streamsProvider->GetLatestGazePoint(gazePoint))
         {
-
-            // check your button
-            // for (int vkCode = 0x01; vkCode <= 0xFF; ++vkCode)
-            // {
-            //     if (GetAsyncKeyState(vkCode) & 0x8000)
-            //     {
-            //         std::cout << "Button pressed: VK_CODE = " << std::hex << vkCode << std::endl;
-            //     }
-            // }
-
-            if (GetAsyncKeyState(0x24) & 0x8000)
-            {
-                // std::cout << "Gaze point: [" << gazePoint.X << ", " << gazePoint.Y << "]" << std::endl;
-                // Converts line-of-sight coordinates to pixel coordinates
-                int cursorX = static_cast<int>((gazePoint.X + 1) / 2 * screenWidth) + offsetX;
-                int cursorY = static_cast<int>((1 - gazePoint.Y) / 2 * screenHeight) + offsetY; // Y座標の変換を修正
-                SetCursorPos(cursorX, cursorY);
-                // std::cout << "Cursor moved to: [" << cursorX << ", " << cursorY << "]" << std::endl;
-            }
+            int cursorX = static_cast<int>((gazePoint.X + 1) / 2 * screenWidth) + offsetX;
+            int cursorY = static_cast<int>((1 - gazePoint.Y) / 2 * screenHeight) + offsetY;
+            lastCursorPos = {cursorX, cursorY};
         }
 
-        // Alt + F4 to exit the programme
-        if ((GetAsyncKeyState(VK_MENU) & 0x8000) && (GetAsyncKeyState(VK_F4) & 0x8000))
+        // Windowsメッセージループを使用してキーイベントをキャプチャ
+        MSG msg = {0};
+        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
-            std::cout << "Alt + F4 detected. Exiting program." << std::endl;
-            break;
+            if (msg.message == WM_KEYDOWN && msg.wParam == 0x24) // 0x24 is VK_HOME
+            {
+                SetCursorPos(lastCursorPos.x, lastCursorPos.y);
+            }
+            if (msg.message == WM_KEYDOWN && msg.wParam == VK_F4 && (GetAsyncKeyState(VK_MENU) & 0x8000))
+            {
+                std::cout << "Alt + F4 detected. Exiting program." << std::endl;
+                return;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        // Check Home button state using GetAsyncKeyState
+        if (GetAsyncKeyState(0x24) & 0x8000) // 0x24 is VK_HOME
+        {
+            SetCursorPos(lastCursorPos.x, lastCursorPos.y);
         }
 
         Sleep(1000 / 144);
     }
-
-    // api->Shutdown();
 }
 
 int main()
